@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package com.ag.project.presentation.components
 
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -36,83 +38,108 @@ fun ProductItem(
     modifier: Modifier = Modifier,
     product: ProductsResponseItem,
     navHostController: NavHostController,
-//    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope
 ) {
 
-    Card(
-        modifier = modifier
-            .wrapContentHeight()
-            .width(200.dp)
-            .padding(8.dp)
-            .clickable {
-                product.id?.let { id ->
-                    navHostController.navigate(Screen.Details(id))
-                }
-            },
-        shape = RoundedCornerShape(7.dp),
-        backgroundColor = Color.White,
-        elevation = 10.dp
-
-    ) {
-        Column(
+    with(sharedTransitionScope) {
+        Card(
             modifier = modifier
                 .wrapContentHeight()
-                .padding(5.dp)
-        ) {
-
-            CoilImage(
-               imageModel = {product.image},
-                modifier = modifier
-                    .fillMaxWidth()
-                    .height(80.dp),
-                imageOptions = ImageOptions(
-                    contentScale = ContentScale.Inside
-                ),
-                loading = {
-                    Box(
-                        modifier = Modifier.matchParentSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-
+                .width(200.dp)
+                .padding(8.dp)
+                .clickable {
+                    product.id?.let { id ->
+                        navHostController.navigate(Screen.Details(id))
                     }
                 },
-                failure = {
-                    Text("Image Not Supported")
-                },
-            )
+            shape = RoundedCornerShape(7.dp),
+            backgroundColor = Color.White,
+            elevation = 10.dp
 
-            Spacer(Modifier.height(7.dp))
+        ) {
 
-            product.title?.let {
-                Text(
-                    text = it,
-                    fontSize = 14.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+            Column(
+                modifier = modifier
+                    .wrapContentHeight()
+                    .padding(5.dp)
+            ) {
+
+                CoilImage(
+                    imageModel = { product.image },
                     modifier = modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .sharedElement(
+                            state = rememberSharedContentState("image/${product.image}"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(1000)
+                            }
+                        ),
+                    imageOptions = ImageOptions(
+                        contentScale = ContentScale.Inside
+                    ),
+                    loading = {
+                        Box(
+                            modifier = Modifier.matchParentSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
 
+                        }
+                    },
+                    failure = {
+                        Text("Image Not Supported")
+                    },
                 )
+
+                Spacer(Modifier.height(7.dp))
+
+                product.title?.let {
+                    Text(
+                        text = it,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = modifier
+                            .sharedElement(
+                                state = rememberSharedContentState("title/${product.title}"),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                boundsTransform = { _, _ ->
+                                    tween(1000)
+                                }
+                            )
+
+                    )
+                }
+
+                Spacer(Modifier.height(7.dp))
+
+                product.price?.let {
+                    Text(
+                        text = "$it $",
+                        fontSize = 18.sp,
+                        color = Color.Green,
+                        modifier = modifier
+                            .sharedElement(
+                                state = rememberSharedContentState("price/${product.price}"),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                boundsTransform = { _, _ ->
+                                    tween(1000)
+                                }
+                            )
+
+                    )
+                }
+
+                product.rating?.let {
+                    RatingBar(
+                        rating = it.rate!!
+                    )
+                }
             }
 
-            Spacer(Modifier.height(7.dp))
-
-            product.price?.let {
-                Text(
-                    text = "$it $",
-                    fontSize = 18.sp,
-                    color = Color.Green,
-                    modifier = modifier
-
-                )
-            }
-
-            product.rating?.let {
-                RatingBar(
-                    rating = it.rate!!
-                )
-            }
         }
-
     }
 }

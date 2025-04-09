@@ -1,6 +1,5 @@
 package com.ag.project.presentation.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
@@ -26,7 +25,6 @@ fun CategoryTabRow(
         selectedTabIndex = pagerState.currentPage,
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White),
     ) {
 
         categories.forEachIndexed { index, category ->

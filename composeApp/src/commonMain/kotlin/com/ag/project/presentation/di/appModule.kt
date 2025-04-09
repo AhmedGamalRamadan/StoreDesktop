@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-val newsModule = module {
+val appModule = module {
 
     single {
 

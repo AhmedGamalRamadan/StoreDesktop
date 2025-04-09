@@ -1,5 +1,8 @@
 package com.ag.project.presentation.screen.home
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +16,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,23 +27,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.ag.project.domain.repository.RemoteProductsRepository
 import com.ag.project.presentation.components.CategoryTabRow
 import com.ag.project.presentation.components.ProductItem
 import com.ag.project.util.Result
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(KoinExperimentalAPI::class)
+@OptIn(KoinExperimentalAPI::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope
 ) {
-
-    val repo = koinInject<RemoteProductsRepository>()
 
     val viewModel: HomeScreenViewModel = koinViewModel()
     val products by viewModel.productsState.collectAsStateWithLifecycle()
@@ -56,6 +56,7 @@ fun HomeScreen(
             "women's clothing"
         )
     }
+
     val pagerState = rememberPagerState {
         categories.size
     }
@@ -126,6 +127,8 @@ fun HomeScreen(
                                 ProductItem(
                                     product = product,
                                     navHostController = navHostController,
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    sharedTransitionScope = sharedTransitionScope
                                 )
                             }
                         }

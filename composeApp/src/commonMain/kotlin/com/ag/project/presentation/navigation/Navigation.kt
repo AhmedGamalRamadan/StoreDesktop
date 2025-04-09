@@ -1,5 +1,7 @@
 package com.ag.project.presentation.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,41 +14,45 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.ag.project.presentation.screen.details.DetailsScreen
 import com.ag.project.presentation.screen.home.HomeScreen
 import com.ag.project.util.Screen
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Navigation() {
 
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = Screen.Home,
-    ) {
+    SharedTransitionLayout {
 
-        composable<Screen.Home> {
-            HomeScreen(navHostController = navController)
-        }
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Home,
+        ) {
 
-        composable<Screen.Details> {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "back",
-                    modifier = Modifier
-                        .clickable {
-                            navController.navigateUp()
-                        }
-                )
-                Text("Navigate Successfully")
+            composable<Screen.Home> {
+                HomeScreen(navHostController = navController)
             }
-        }
 
+            composable<Screen.Details> {
+
+                val args = it.toRoute<Screen.Details>()
+//                Column(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                ) {
+
+
+                    DetailsScreen(
+                        productId = args.id,
+                        animatedVisibilityScope = this
+                    )
+//                }
+            }
+
+        }
     }
+
 }

@@ -137,7 +137,7 @@ fun DetailsScreen(
                             product.title?.let {
                                 Text(
                                     text = it,
-                                    style = MaterialTheme.typography.h2,
+                                    style = MaterialTheme.typography.h5,
                                     textAlign = TextAlign.Start,
                                     color = MaterialTheme.colors.primary,
                                     modifier = modifier
@@ -181,7 +181,7 @@ fun DetailsScreen(
                         product.description?.let {
                             Text(
                                 text = it,
-                                style = MaterialTheme.typography.h2,
+                                style = MaterialTheme.typography.h5,
                                 color = MaterialTheme.colors.primary
                             )
                         }
